@@ -65,39 +65,43 @@ const styles = StyleSheet.create({
   },
   headerOverlay: {
     position: 'absolute',
-    top: 50,
+    top: 50, // Safe margin from top (Status Bar)
     left: 0,
     right: 0,
+    height: 50, // Fixed height for the navbar area
     zIndex: 10,
     flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 16, // Add padding for left/right alignment
+    justifyContent: 'center', // Centers the "Para Você" text
+    alignItems: 'center', // Vertically centers all items
   },
   logoContainer: {
     position: 'absolute',
-    left: 16,
-    top: 10, // Fine-tune vertical alignment with tabs
+    left: 20, // Standard spacing
+    // Removed 'top' to let alignItems handle vertical centering
   },
   tabContainer: {
     alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%',
   },
   tabText: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 17, // Slightly larger for legibility
     textShadowColor: 'rgba(0,0,0,0.5)',
     textShadowRadius: 4,
   },
   activeIndicator: {
     width: 30,
-    height: 2,
+    height: 3, // Slightly thicker
     backgroundColor: 'white',
     marginTop: 4,
+    borderRadius: 2,
   },
   savedButton: {
     position: 'absolute',
-    right: 20,
-    padding: 8,
+    right: 20, // Matches logo left spacing
+    padding: 4,
+    // Removed internal padding that might throw off alignment
   }
 });
