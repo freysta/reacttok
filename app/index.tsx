@@ -14,42 +14,41 @@ import {
 	View,
 } from "react-native";
 
+import { useMemo } from 'react'; // Import useMemo
+
+// ... imports
+
 export default function FeedScreen() {
-	return (
-		<View style={styles.container}>
-			<StatusBar barStyle="light-content" />
+  // Multiplica a lista de conceitos para simular loop infinito (ex: 1000 repetições)
+  const infiniteData = useMemo(() => {
+    const multiplied = [];
+    for (let i = 0; i < 100; i++) {
+      multiplied.push(...CONCEPTS);
+    }
+    return multiplied;
+  }, []);
 
-			<View style={styles.headerOverlay}>
-				<View style={styles.logoContainer}>
-					<Logo />
-				</View>
+  return (
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" />
+      
+      {/* ... Header Overlay Code ... */}
 
-				<View style={styles.tabContainer}>
-					<Text style={styles.tabText}>Para Você</Text>
-					<View style={styles.activeIndicator} />
-				</View>
-
-				        <Link href="/profile" asChild>
-				          <TouchableOpacity style={styles.savedButton}>
-				            <Ionicons name="person-circle-outline" size={32} color="white" />
-				          </TouchableOpacity>
-				        </Link>			</View>
-
-			<FlatList
-				data={CONCEPTS}
-				renderItem={({ item }) => <FeedItem item={item} />}
-				keyExtractor={(item) => item.id}
-				pagingEnabled
-				showsVerticalScrollIndicator={false}
-				snapToAlignment="start"
-				decelerationRate="fast"
-				initialNumToRender={1}
-				maxToRenderPerBatch={2}
-				windowSize={3}
-				style={styles.list}
-			/>
-		</View>
-	);
+      <FlatList
+        data={infiniteData} // Usa a lista multiplicada
+        renderItem={({ item }) => <FeedItem item={item} />}
+        keyExtractor={(item, index) => `${item.id}-${index}`} // Gera chaves únicas para os duplicados
+        pagingEnabled
+        showsVerticalScrollIndicator={false}
+        snapToAlignment="start"
+        decelerationRate="fast"
+        initialNumToRender={1}
+        maxToRenderPerBatch={2}
+        windowSize={3}
+        style={styles.list}
+      />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
