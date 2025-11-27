@@ -1,0 +1,200 @@
+import React, { useState } from 'react';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  TextInput, 
+  TouchableOpacity, 
+  ScrollView, 
+  KeyboardAvoidingView, 
+  Platform,
+  Alert 
+} from 'react-native';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { Colors } from '@/constants/theme';
+import { useConcepts } from '@/context/ConceptsContext';
+import Constants from 'expo-constants';
+
+export default function CreateScreen() {
+  const router = useRouter();
+  const { addConcept } = useConcepts();
+
+  const [title, setTitle] = useState('');
+  const [desc, setDesc] = useState('');
+  const [code, setCode] = useState('');
+
+  const handlePublish = () => {
+    if (!title || !desc || !code) {
+      Alert.alert('Erro', 'Preencha todos os campos!');
+      return;
+    }
+
+    const newId = `custom-${Date.now()}`;
+    
+    addConcept({
+      id: newId,
+      title,
+      desc,
+      shortCode: code,
+      fullExplanation: desc, // Simplification for demo
+      fullCode: code
+    });
+
+    Alert.alert('Sucesso', 'Seu slide foi publicado no feed!', [
+      { text: 'OK', onPress: () => router.back() }
+    ]);
+  };
+
+  return (
+    <KeyboardAvoidingView 
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Text style={styles.cancelText}>Cancelar</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Criar Slide</Text>
+        <TouchableOpacity onPress={handlePublish}>
+          <Text style={styles.publishText}>Publicar</Text>
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.content}>
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Título do Conceito</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Ex: useContext"
+            placeholderTextColor="#666"
+            value={title}
+            onChangeText={setTitle}
+            maxLength={30}
+          />
+        </View>
+
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Descrição Curta</Text>
+          <TextInput
+            style={[styles.input, styles.textArea]}
+            placeholder="Explique em poucas palavras..."
+            placeholderTextColor="#666"
+            value={desc}
+            onChangeText={setDesc}
+            multiline
+            maxLength={100}
+          />
+        </View>
+
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Código Exemplo</Text>
+          <View style={styles.codeEditor}>
+            <TextInput
+              style={styles.codeInput}
+              placeholder="// Cole seu código aqui..."
+              placeholderTextColor="#666"
+              value={code}
+              onChangeText={setCode}
+              multiline
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+          </View>
+        </View>
+
+        <View style={styles.tipBox}>
+          <Ionicons name="bulb-outline" size={20} color="#ffd700" />
+          <Text style={styles.tipText}>
+            Dica: Use códigos curtos para caber na tela do feed!
+          </Text>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#121212',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 20,
+    height: 60,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333',
+  },
+  headerTitle: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  cancelText: {
+    color: 'white',
+    fontSize: 16,
+  },
+  publishText: {
+    color: Colors.tiktok.accent,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  content: {
+    padding: 20,
+  },
+  inputGroup: {
+    marginBottom: 24,
+  },
+  label: {
+    color: '#888',
+    fontSize: 14,
+    marginBottom: 8,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+  },
+  input: {
+    backgroundColor: '#1e1e1e',
+    borderRadius: 8,
+    padding: 16,
+    color: 'white',
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  textArea: {
+    height: 80,
+    textAlignVertical: 'top',
+  },
+  codeEditor: {
+    backgroundColor: '#0d1117',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#333',
+    padding: 16,
+    height: 200,
+  },
+  codeInput: {
+    color: '#e6edf3',
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+    fontSize: 14,
+    flex: 1,
+    textAlignVertical: 'top',
+  },
+  tipBox: {
+    flexDirection: 'row',
+    backgroundColor: 'rgba(255, 215, 0, 0.1)',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    gap: 10,
+  },
+  tipText: {
+    color: '#ffd700',
+    fontSize: 14,
+    flex: 1,
+  }
+});

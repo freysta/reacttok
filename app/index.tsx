@@ -3,8 +3,8 @@ import Logo from "@/components/Logo";
 import { CONCEPTS } from "@/data/concepts";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
-import Constants from "expo-constants"; // Adicionado para altura da barra de status
-import React from "react";
+import Constants from "expo-constants";
+import React, { useMemo } from "react";
 import {
 	FlatList,
 	StatusBar,
@@ -13,42 +13,66 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
-
-import { useMemo } from 'react'; // Import useMemo
-
-// ... imports
+import { useConcepts } from "@/context/ConceptsContext"; // Import Context
 
 export default function FeedScreen() {
-  // Multiplica a lista de conceitos para simular loop infinito (ex: 1000 repetições)
+  const { concepts } = useConcepts(); // Use dynamic concepts
+
+  // Multiplica a lista dinâmica para simular loop infinito
   const infiniteData = useMemo(() => {
+    if (concepts.length === 0) return [];
     const multiplied = [];
-    for (let i = 0; i < 100; i++) {
-      multiplied.push(...CONCEPTS);
+    // Reduzi para 20 repetições para performance ao adicionar itens
+    for (let i = 0; i < 20; i++) {
+      multiplied.push(...concepts);
     }
     return multiplied;
-  }, []);
+  }, [concepts]); // Re-calcula quando concepts mudar
 
-  return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
+	return (
+		<View style={styles.container}>
+			<StatusBar barStyle="light-content" />
+
+			<View style={styles.headerOverlay}>
+        {/* ... Header Code ... */}
+				<View style={styles.logoContainer}>
+					<Logo />
+				</View>
+
+				<View style={styles.tabContainer}>
+					<Text style={styles.tabText}>Para Você</Text>
+					<View style={styles.activeIndicator} />
+				</View>
+
+				<Link href="/profile" asChild>
+					<TouchableOpacity style={styles.savedButton}>
+						<Ionicons name="person-circle-outline" size={32} color="white" />
+					</TouchableOpacity>
+				</Link>
+			</View>
+
+			<FlatList
+				data={infiniteData}
+				renderItem={({ item }) => <FeedItem item={item} />}
+				keyExtractor={(item, index) => `${item.id}-${index}`}
+				pagingEnabled
+				showsVerticalScrollIndicator={false}
+				snapToAlignment="start"
+				decelerationRate="fast"
+				initialNumToRender={1}
+				maxToRenderPerBatch={2}
+				windowSize={3}
+				style={styles.list}
+			/>
       
-      {/* ... Header Overlay Code ... */}
-
-      <FlatList
-        data={infiniteData} // Usa a lista multiplicada
-        renderItem={({ item }) => <FeedItem item={item} />}
-        keyExtractor={(item, index) => `${item.id}-${index}`} // Gera chaves únicas para os duplicados
-        pagingEnabled
-        showsVerticalScrollIndicator={false}
-        snapToAlignment="start"
-        decelerationRate="fast"
-        initialNumToRender={1}
-        maxToRenderPerBatch={2}
-        windowSize={3}
-        style={styles.list}
-      />
-    </View>
-  );
+      {/* Create Button (FAB) */}
+      <Link href="/create" asChild>
+        <TouchableOpacity style={styles.fab}>
+          <Ionicons name="add" size={30} color="black" />
+        </TouchableOpacity>
+      </Link>
+		</View>
+	);
 }
 
 const styles = StyleSheet.create({
@@ -97,6 +121,21 @@ const styles = StyleSheet.create({
 	},
   savedButton: {
     position: 'absolute',
-    right: 16, // Matches logo left spacing (20 was slightly off visually with 32px icon)
-    padding: 0, // Remove padding to let icon size dictate layout
-  }});
+    right: 16,
+    padding: 0, 
+  },
+  fab: {
+    position: 'absolute',
+    bottom: 40,
+    alignSelf: 'center',
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'white', // TikTok style add button
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 4,
+    borderColor: 'rgba(0,0,0,0.5)',
+    zIndex: 20,
+  }
+});
