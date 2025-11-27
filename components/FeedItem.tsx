@@ -5,7 +5,8 @@ import {
   StyleSheet, 
   Dimensions, 
   TouchableOpacity, 
-  Vibration 
+  Vibration,
+  Share // Added Share import
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
@@ -25,6 +26,16 @@ export default function FeedItem({ item }: FeedItemProps) {
   const handleLike = () => {
     setLiked(!liked);
     Vibration.vibrate(50);
+  };
+
+  const onShare = async () => {
+    try {
+      await Share.share({
+        message: `Aprenda sobre ${item.title} no ReactTok! \n\n${item.shortCode}`,
+      });
+    } catch (error: any) {
+      console.error('Error sharing:', error.message);
+    }
   };
 
   return (
@@ -62,6 +73,17 @@ export default function FeedItem({ item }: FeedItemProps) {
             <Text style={styles.actionLabel}>Detalhes</Text>
           </TouchableOpacity>
         </Link>
+
+        <TouchableOpacity 
+          style={styles.actionButton} 
+          onPress={onShare}
+          activeOpacity={0.8}
+        >
+          <View style={styles.iconContainer}>
+            <Ionicons name="share-social" size={35} color="white" />
+          </View>
+          <Text style={styles.actionLabel}>Compartilhar</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
