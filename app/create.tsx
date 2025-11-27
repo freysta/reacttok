@@ -8,13 +8,13 @@ import {
   ScrollView, 
   KeyboardAvoidingView, 
   Platform,
-  Alert 
+  Alert,
+  ActivityIndicator // Import ActivityIndicator
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/theme';
 import { useConcepts } from '@/context/ConceptsContext';
-import Constants from 'expo-constants';
 
 export default function CreateScreen() {
   const router = useRouter();
@@ -23,6 +23,7 @@ export default function CreateScreen() {
   const [title, setTitle] = useState('');
   const [desc, setDesc] = useState('');
   const [code, setCode] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // New loading state
 
   const handlePublish = () => {
     if (!title || !desc || !code) {
@@ -30,21 +31,31 @@ export default function CreateScreen() {
       return;
     }
 
-    const newId = `custom-${Date.now()}`;
-    
-    addConcept({
-      id: newId,
-      title,
-      desc,
-      shortCode: code,
-      fullExplanation: desc, // Simplification for demo
-      fullCode: code
-    });
+    setIsLoading(true); // Start loading
 
-    Alert.alert('Sucesso', 'Seu slide foi publicado no feed!', [
-      { text: 'OK', onPress: () => router.back() }
-    ]);
+    // Fake upload delay
+    setTimeout(() => {
+      const newId = `custom-${Date.now()}`;
+      
+      addConcept({
+        id: newId,
+        title,
+        desc,
+        shortCode: code,
+        fullExplanation: desc,
+        fullCode: code
+      });
+
+      setIsLoading(false); // Stop loading
+
+      Alert.alert('Sucesso', 'Seu slide foi publicado no feed!', [
+        { text: 'OK', onPress: () => router.back() }
+      ]);
+    }, 3000); // 3 seconds delay
   };
+
+  // Disable buttons while loading
+  const isPublishDisabled = isLoading || !title || !desc || !code;
 
   return (
     <KeyboardAvoidingView 
@@ -52,16 +63,23 @@ export default function CreateScreen() {
       style={styles.container}
     >
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.cancelText}>Cancelar</Text>
+        <TouchableOpacity onPress={() => !isLoading && router.back()}>
+          <Text style={[styles.cancelText, isLoading && styles.disabledText]}>Cancelar</Text>
         </TouchableOpacity>
+        
         <Text style={styles.headerTitle}>Criar Slide</Text>
-        <TouchableOpacity onPress={handlePublish}>
-          <Text style={styles.publishText}>Publicar</Text>
+        
+        <TouchableOpacity onPress={handlePublish} disabled={isPublishDisabled}>
+          {isLoading ? (
+            <ActivityIndicator color={Colors.tiktok.accent} size="small" />
+          ) : (
+            <Text style={[styles.publishText, isPublishDisabled && styles.disabledText]}>Publicar</Text>
+          )}
         </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
+        {/* Input Groups remain the same... */}
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Título do Conceito</Text>
           <TextInput
@@ -142,6 +160,9 @@ const styles = StyleSheet.create({
     color: Colors.tiktok.accent,
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  disabledText: {
+    opacity: 0.5,
   },
   content: {
     padding: 20,

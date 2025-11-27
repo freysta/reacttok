@@ -1,75 +1,77 @@
-# ReactTok
+# 📱 ReactTok (v2.0)
 
-ReactTok é um miniapp educacional desenvolvido em React Native com Expo, inspirado no formato "TikTok" (feed vertical) para ensinar conceitos fundamentais de React Native de forma rápida e interativa.
+**ReactTok** é uma plataforma educacional mobile (estilo TikTok) para ensino de React Native.
+O projeto combina UX moderna (feed infinito vertical) com ferramentas de produtividade (favoritos, criação de conteúdo).
 
-## 📱 Telas e Funcionalidades
+---
 
-### 1. Feed Principal (`/`)
-- **Conceito**: Interface de rolagem vertical infinita (estilo TikTok).
-- **Funcionalidade**:
-    - Exibe "cards" que ocupam a tela inteira.
-    - Cada card ensina um conceito rápido (ex: `useState`, `useEffect`).
-    - Botão de "Curtir" com feedback tátil (Vibração).
-    - Botão "Detalhes" para aprofundamento.
-- **Tecnologia**: `FlatList` com `pagingEnabled`.
+## 🚀 Funcionalidades Principais
 
-### 2. Detalhes (`/details/[id]`)
-- **Conceito**: Explicação aprofundada do tópico escolhido.
-- **Funcionalidade**:
-    - Explicação teórica completa.
-    - **Demonstração Interativa**: Um componente real rodando na tela (ex: um contador clicável para `useState`).
-    - **Código Completo**: Bloco de código com syntax highlighting.
-- **Navegação**: Transição via Stack Navigation.
+### 1. Feed Infinito (`Home`)
+*   **Navegação:** Swipe vertical (cima/baixo) infinito.
+*   **Conteúdo:** Cards de tela cheia com explicações rápidas e snippets de código.
+*   **Interação:**
+    *   ❤️ **Curtir:** Feedback tátil (Vibração).
+    *   💬 **Compartilhar:** Envia o código via WhatsApp/Telegram.
+    *   🔖 **Salvar:** Persiste o conteúdo nos favoritos.
+    *   ... **Detalhes:** Abre aula completa + Demonstração Interativa.
 
-## 🛠️ Tecnologias Utilizadas
+### 2. Criação de Conteúdo (`Create`)
+*   **Publicação:** Usuários podem criar seus próprios slides.
+*   **Editor:** Formulário para Título, Resumo e Código.
+*   **Simulação:** Loading de upload realista (3s) e feedback visual.
+*   **Hot Update:** O novo slide aparece imediatamente no Feed.
 
-- **Core**: React Native, Expo (SDK 52+).
-- **Linguagem**: TypeScript.
-- **Navegação**: Expo Router (File-based routing).
-- **Interatividade**: 
-    - `react-native-reanimated` (Animações).
-    - `expo-haptics` / `Vibration` (Feedback tátil).
-- **Estilização**: `StyleSheet` (CSS-in-JS nativo).
-- **Componentes**: `FlatList` otimizada para vídeos/cards.
+### 3. Perfil do Usuário (`Profile`)
+*   **Dashboard:** Estatísticas (Seguidores, Likes).
+*   **Meus Favoritos:** Lista integrada de todos os itens salvos (persiste mesmo fechando o app via `AsyncStorage`).
 
-## 🚀 Como Rodar o Projeto
+---
 
-1. **Instale as dependências**:
-   ```bash
-   npm install
-   ```
+## 🛠️ Stack Tecnológica
 
-2. **Inicie o servidor de desenvolvimento**:
-   ```bash
-   npx expo start
-   ```
+*   **Core:** React Native + Expo SDK 52.
+*   **Linguagem:** TypeScript.
+*   **Navegação:** Expo Router (File-based).
+*   **Estado Global:** Context API (`ConceptsContext`).
+*   **Persistência:** `AsyncStorage` (Favoritos).
+*   **UI/UX:** `react-native-reanimated`, `expo-haptics`, `FlatList` otimizada.
 
-3. **Teste no dispositivo**:
-   - Escaneie o QR Code com o app **Expo Go** (Android/iOS).
-   - Ou pressione `a` para abrir no emulador Android.
-   - Ou pressione `i` para abrir no simulador iOS.
+---
 
-## 📚 Conceitos Ensinados
-
-1. **Componentes + JSX**: A base da UI declarativa.
-2. **useState**: Gerenciamento de estado local.
-3. **useEffect**: Ciclo de vida e efeitos colaterais.
-4. **StyleSheet**: Estilização e Layout (Flexbox).
-5. **APIs Nativas**: Acesso ao hardware (Vibração).
-
-## 📂 Estrutura de Pastas
+## 📂 Estrutura do Projeto
 
 ```
 /app
-  index.tsx         # Tela Principal (Feed)
-  details/[id].tsx  # Tela de Detalhes Dinâmica
-  _layout.tsx       # Configuração da Navegação Stack
+  index.tsx         # Feed Principal (Infinite Scroll)
+  profile.tsx       # Perfil + Lista de Favoritos
+  create.tsx        # Formulário de Criação (Novo Slide)
+  details/[id].tsx  # Aula Completa + Demo Interativa
 /components
-  FeedItem.tsx      # Slide individual do Feed
-  InteractiveDemos.tsx # Demos rodando ao vivo
-  CodeBlock.tsx     # Exibição de código formatado
+  FeedItem.tsx      # Card do Feed (Likes, Share, Bookmark)
+  InteractiveDemos  # Componentes reais rodando nas aulas
+/context
+  ConceptsContext   # Gerencia a lista de vídeos (Feed + Novos)
+/hooks
+  useBookmarks      # Lógica de salvar/remover favoritos
 /data
-  concepts.ts       # "Banco de dados" estático dos conteúdos
-/constants
-  theme.ts          # Paleta de cores (Dark Mode/TikTok theme)
+  concepts.ts       # Dados iniciais (Seed)
 ```
+
+## 🚀 Como Rodar
+
+1.  **Instale as dependências**:
+    ```bash
+    npm install
+    ```
+2.  **Inicie o projeto**:
+    ```bash
+    npx expo start
+    ```
+3.  **Abra no Celular**: Escaneie o QR Code com o app **Expo Go**.
+
+---
+
+## 🔮 Próximos Passos (Roadmap Backend)
+O time de Backend está desenvolvendo a API REST para persistência em nuvem.
+Consulte o arquivo `ESPECIFICACAO_BACKEND.md` para detalhes da integração.
