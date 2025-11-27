@@ -3,6 +3,7 @@ import Logo from "@/components/Logo";
 import { CONCEPTS } from "@/data/concepts";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
+import Constants from "expo-constants"; // Adicionado para altura da barra de status
 import React from "react";
 import {
 	FlatList,
@@ -61,14 +62,15 @@ const styles = StyleSheet.create({
 	},
 	headerOverlay: {
 		position: "absolute",
-		top: 20, // Safe margin from top (Status Bar)
+		top: 0, // Inicia do topo absoluto
 		left: 0,
 		right: 0,
-		height: 50, // Fixed height for the navbar area
+		paddingTop: Constants.statusBarHeight + 20, // Padding abaixo da barra de status
+		height: (Constants.statusBarHeight || 0) + 20 + 50, // Altura total (status bar + padding + altura do conteúdo)
 		zIndex: 10,
 		flexDirection: "row",
-		justifyContent: "center", // Centers the "Para Você" text
-		alignItems: "center", // Vertically centers all items
+		justifyContent: "center", // Centra o texto "Para Você"
+		alignItems: "center", // Centra verticalmente todos os itens (logo, texto, botão)
 	},
 	logoContainer: {
 		position: "absolute",
