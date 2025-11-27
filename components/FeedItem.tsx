@@ -115,22 +115,23 @@ export default function FeedItem({ item }: FeedItemProps) {
 const styles = StyleSheet.create({
   container: {
     width: Dimensions.get('window').width,
-    height: WINDOW_HEIGHT, // Ensure it takes full window height including safe areas if needed, or adjust in parent
+    height: WINDOW_HEIGHT, 
     backgroundColor: 'black',
     justifyContent: 'center',
-    paddingBottom: 80, // Space for bottom navigation if it existed, or just visual balance
   },
   contentContainer: {
-    paddingHorizontal: 20,
-    width: '85%',
-    justifyContent: 'center',
     flex: 1,
+    width: '100%',
+    justifyContent: 'center',
+    paddingLeft: 20,
+    paddingRight: 90, // Deixa espaço seguro para a sidebar (ícones)
   },
   title: {
     color: 'white',
     fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 12,
+    textAlign: 'left', // Mantém alinhado à esquerda para leitura natural
     textShadowColor: 'rgba(0, 0, 0, 0.75)',
     textShadowOffset: { width: -1, height: 1 },
     textShadowRadius: 10
@@ -138,12 +139,17 @@ const styles = StyleSheet.create({
   description: {
     color: '#e0e0e0',
     fontSize: 16,
-    marginBottom: 20,
-    lineHeight: 22,
+    marginBottom: 24,
+    lineHeight: 24,
+    textAlign: 'left',
   },
   codeContainer: {
-    maxHeight: 200,
     width: '100%',
+    borderRadius: 12,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#333',
+    backgroundColor: '#1e1e1e', // Garante fundo no container
   },
   sidebar: {
     position: 'absolute',
