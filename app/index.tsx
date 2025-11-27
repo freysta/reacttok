@@ -6,12 +6,13 @@ import {
   StatusBar, 
   Dimensions,
   TouchableOpacity,
-  SafeAreaView
+  Text
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { CONCEPTS } from '@/data/concepts';
 import FeedItem from '@/components/FeedItem';
+import Logo from '@/components/Logo';
 
 export default function FeedScreen() {
   return (
@@ -19,6 +20,10 @@ export default function FeedScreen() {
       <StatusBar barStyle="light-content" />
       
       <View style={styles.headerOverlay}>
+        <View style={styles.logoContainer}>
+          <Logo />
+        </View>
+
         <View style={styles.tabContainer}>
           <Text style={styles.tabText}>Para Você</Text>
           <View style={styles.activeIndicator} />
@@ -48,19 +53,7 @@ export default function FeedScreen() {
   );
 }
 
-import React from 'react';
-import { 
-  StyleSheet, 
-  FlatList, 
-  View, 
-  StatusBar, 
-  Dimensions,
-  TouchableOpacity,
-  Text
-} from 'react-native';
-// ... imports
 
-// ... component code
 
 const styles = StyleSheet.create({
   container: {
@@ -79,6 +72,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 16, // Add padding for left/right alignment
+  },
+  logoContainer: {
+    position: 'absolute',
+    left: 16,
+    top: 10, // Fine-tune vertical alignment with tabs
   },
   tabContainer: {
     alignItems: 'center',
