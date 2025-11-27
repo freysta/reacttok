@@ -6,13 +6,14 @@ import {
   Dimensions, 
   TouchableOpacity, 
   Vibration,
-  Share // Added Share import
+  Share
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { Colors } from '@/constants/theme';
 import CodeBlock from './CodeBlock';
 import { Concept } from '@/data/concepts';
+import { useBookmarks } from '@/hooks/useBookmarks';
 
 const { height: WINDOW_HEIGHT } = Dimensions.get('window');
 
@@ -22,10 +23,17 @@ interface FeedItemProps {
 
 export default function FeedItem({ item }: FeedItemProps) {
   const [liked, setLiked] = useState(false);
+  const { isBookmarked, toggleBookmark } = useBookmarks();
+  const bookmarked = isBookmarked(item.id);
 
   const handleLike = () => {
     setLiked(!liked);
     Vibration.vibrate(50);
+  };
+
+  const handleBookmark = () => {
+    toggleBookmark(item.id);
+    Vibration.vibrate(20);
   };
 
   const onShare = async () => {
@@ -63,6 +71,21 @@ export default function FeedItem({ item }: FeedItemProps) {
             />
           </View>
           <Text style={styles.actionLabel}>{liked ? '1' : 'Curtir'}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={styles.actionButton} 
+          onPress={handleBookmark}
+          activeOpacity={0.8}
+        >
+          <View style={styles.iconContainer}>
+            <Ionicons 
+              name={bookmarked ? "bookmark" : "bookmark-outline"} 
+              size={35} 
+              color={bookmarked ? "#ffd700" : "white"} 
+            />
+          </View>
+          <Text style={styles.actionLabel}>Salvar</Text>
         </TouchableOpacity>
 
         <Link href={`/details/${item.id}`} asChild>
