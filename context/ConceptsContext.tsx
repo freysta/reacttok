@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { Concept, CONCEPTS as INITIAL_CONCEPTS } from '@/data/concepts';
+import { Concept, CONCEPTS as INITIAL_CONCEPTS, Level } from '@/data/concepts';
 
 interface ConceptsContextType {
   concepts: Concept[];
@@ -8,12 +8,24 @@ interface ConceptsContextType {
 
 const ConceptsContext = createContext<ConceptsContextType | undefined>(undefined);
 
+const LEVEL_WEIGHT: Record<Level, number> = {
+  basic: 0,
+  intermediate: 1,
+  advanced: 2,
+};
+
 export function ConceptsProvider({ children }: { children: ReactNode }) {
-  const [concepts, setConcepts] = useState<Concept[]>(INITIAL_CONCEPTS);
+  // Sort initial concepts
+  const [concepts, setConcepts] = useState<Concept[]>(() => {
+    return [...INITIAL_CONCEPTS].sort((a, b) => LEVEL_WEIGHT[a.level] - LEVEL_WEIGHT[b.level]);
+  });
 
   const addConcept = (newConcept: Concept) => {
-    // Adiciona o novo conceito no início da lista
-    setConcepts(prev => [newConcept, ...prev]);
+    setConcepts(prev => {
+      const updated = [newConcept, ...prev];
+      // Keep sorted
+      return updated.sort((a, b) => LEVEL_WEIGHT[a.level] - LEVEL_WEIGHT[b.level]);
+    });
   };
 
   return (

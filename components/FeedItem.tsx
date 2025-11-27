@@ -12,7 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { Colors } from '@/constants/theme';
 import CodeBlock from './CodeBlock';
-import { Concept } from '@/data/concepts';
+import { Concept, Level } from '@/data/concepts';
 import { useBookmarks } from '@/hooks/useBookmarks';
 
 const { height: WINDOW_HEIGHT } = Dimensions.get('window');
@@ -21,10 +21,24 @@ interface FeedItemProps {
   item: Concept;
 }
 
+const LEVEL_COLORS: Record<Level, string> = {
+  basic: '#2ca02c', // Green
+  intermediate: '#ff9500', // Orange
+  advanced: '#ff2d55', // Red
+};
+
+const LEVEL_LABELS: Record<Level, string> = {
+  basic: 'Básico',
+  intermediate: 'Intermediário',
+  advanced: 'Avançado',
+};
+
 export default function FeedItem({ item }: FeedItemProps) {
   const [liked, setLiked] = useState(false);
   const { isBookmarked, toggleBookmark } = useBookmarks();
   const bookmarked = isBookmarked(item.id);
+  
+  const levelColor = LEVEL_COLORS[item.level] || LEVEL_COLORS.basic;
 
   const handleLike = () => {
     setLiked(!liked);
@@ -49,6 +63,18 @@ export default function FeedItem({ item }: FeedItemProps) {
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
+        
+        <View style={styles.tagsRow}>
+          <View style={[styles.badge, { backgroundColor: levelColor }]}>
+            <Text style={styles.badgeText}>{LEVEL_LABELS[item.level] || 'Básico'}</Text>
+          </View>
+          {item.tags?.map((tag, index) => (
+             <View key={index} style={styles.tagBadge}>
+               <Text style={styles.tagText}>#{tag}</Text>
+             </View>
+          ))}
+        </View>
+
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.description}>{item.desc}</Text>
         
@@ -125,6 +151,34 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingLeft: 20,
     paddingRight: 90, // Deixa espaço seguro para a sidebar (ícones)
+  },
+  tagsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 12,
+  },
+  badge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 4,
+    alignSelf: 'flex-start',
+  },
+  badgeText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+  },
+  tagBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+  },
+  tagText: {
+    color: '#ccc',
+    fontSize: 12,
   },
   title: {
     color: 'white',

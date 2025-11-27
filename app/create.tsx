@@ -15,6 +15,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/theme';
 import { useConcepts } from '@/context/ConceptsContext';
+import { Level } from '@/data/concepts';
 
 export default function CreateScreen() {
   const router = useRouter();
@@ -23,7 +24,9 @@ export default function CreateScreen() {
   const [title, setTitle] = useState('');
   const [desc, setDesc] = useState('');
   const [code, setCode] = useState('');
-  const [isLoading, setIsLoading] = useState(false); // New loading state
+  const [level, setLevel] = useState<Level>('basic'); // New level state
+  const [isLoading, setIsLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false); // Custom feedback state
 
   const handlePublish = () => {
     if (!title || !desc || !code) {
@@ -31,9 +34,8 @@ export default function CreateScreen() {
       return;
     }
 
-    setIsLoading(true); // Start loading
+    setIsLoading(true);
 
-    // Fake upload delay
     setTimeout(() => {
       const newId = `custom-${Date.now()}`;
       
@@ -43,19 +45,32 @@ export default function CreateScreen() {
         desc,
         shortCode: code,
         fullExplanation: desc,
-        fullCode: code
+        fullCode: code,
+        level: level,
+        tags: ['community'] // Default tag
       });
 
-      setIsLoading(false); // Stop loading
-
-      Alert.alert('Sucesso', 'Seu slide foi publicado no feed!', [
-        { text: 'OK', onPress: () => router.back() }
-      ]);
-    }, 3000); // 3 seconds delay
+      setIsLoading(false);
+      setShowSuccess(true); // Show custom success overlay
+      
+      // Navigate back after showing success
+      setTimeout(() => {
+         router.back();
+      }, 1500);
+      
+    }, 2000);
   };
 
-  // Disable buttons while loading
   const isPublishDisabled = isLoading || !title || !desc || !code;
+
+  if (showSuccess) {
+    return (
+      <View style={styles.successOverlay}>
+        <Ionicons name="checkmark-circle" size={80} color="#4cd964" />
+        <Text style={styles.successText}>Publicado com Sucesso!</Text>
+      </View>
+    );
+  }
 
   return (
     <KeyboardAvoidingView 
@@ -103,6 +118,27 @@ export default function CreateScreen() {
             multiline
             maxLength={100}
           />
+        </View>
+
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Nível de Dificuldade</Text>
+          <View style={styles.levelSelector}>
+            {(['basic', 'intermediate', 'advanced'] as Level[]).map((l) => (
+              <TouchableOpacity
+                key={l}
+                style={[
+                  styles.levelOption, 
+                  level === l && styles.levelOptionSelected,
+                  level === l && { borderColor: l === 'basic' ? '#2ca02c' : l === 'intermediate' ? '#ff9500' : '#ff2d55' }
+                ]}
+                onPress={() => setLevel(l)}
+              >
+                <Text style={[styles.levelText, level === l && { color: 'white' }]}>
+                  {l === 'basic' ? 'Básico' : l === 'intermediate' ? 'Médio' : 'Avançado'}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
 
         <View style={styles.inputGroup}>
@@ -217,5 +253,38 @@ const styles = StyleSheet.create({
     color: '#ffd700',
     fontSize: 14,
     flex: 1,
+  },
+  levelSelector: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  levelOption: {
+    flex: 1,
+    paddingVertical: 12,
+    borderWidth: 1,
+    borderColor: '#333',
+    borderRadius: 8,
+    alignItems: 'center',
+    backgroundColor: '#1e1e1e',
+  },
+  levelOptionSelected: {
+    backgroundColor: '#333',
+    borderWidth: 2,
+  },
+  levelText: {
+    color: '#888',
+    fontWeight: '600',
+  },
+  successOverlay: {
+    flex: 1,
+    backgroundColor: '#000',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  successText: {
+    color: 'white',
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginTop: 20,
   }
 });
