@@ -1,50 +1,75 @@
-# Welcome to your Expo app 👋
+# ReactTok
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+ReactTok é um miniapp educacional desenvolvido em React Native com Expo, inspirado no formato "TikTok" (feed vertical) para ensinar conceitos fundamentais de React Native de forma rápida e interativa.
 
-## Get started
+## 📱 Telas e Funcionalidades
 
-1. Install dependencies
+### 1. Feed Principal (`/`)
+- **Conceito**: Interface de rolagem vertical infinita (estilo TikTok).
+- **Funcionalidade**:
+    - Exibe "cards" que ocupam a tela inteira.
+    - Cada card ensina um conceito rápido (ex: `useState`, `useEffect`).
+    - Botão de "Curtir" com feedback tátil (Vibração).
+    - Botão "Detalhes" para aprofundamento.
+- **Tecnologia**: `FlatList` com `pagingEnabled`.
 
+### 2. Detalhes (`/details/[id]`)
+- **Conceito**: Explicação aprofundada do tópico escolhido.
+- **Funcionalidade**:
+    - Explicação teórica completa.
+    - **Demonstração Interativa**: Um componente real rodando na tela (ex: um contador clicável para `useState`).
+    - **Código Completo**: Bloco de código com syntax highlighting.
+- **Navegação**: Transição via Stack Navigation.
+
+## 🛠️ Tecnologias Utilizadas
+
+- **Core**: React Native, Expo (SDK 52+).
+- **Linguagem**: TypeScript.
+- **Navegação**: Expo Router (File-based routing).
+- **Interatividade**: 
+    - `react-native-reanimated` (Animações).
+    - `expo-haptics` / `Vibration` (Feedback tátil).
+- **Estilização**: `StyleSheet` (CSS-in-JS nativo).
+- **Componentes**: `FlatList` otimizada para vídeos/cards.
+
+## 🚀 Como Rodar o Projeto
+
+1. **Instale as dependências**:
    ```bash
    npm install
    ```
 
-2. Start the app
-
+2. **Inicie o servidor de desenvolvimento**:
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+3. **Teste no dispositivo**:
+   - Escaneie o QR Code com o app **Expo Go** (Android/iOS).
+   - Ou pressione `a` para abrir no emulador Android.
+   - Ou pressione `i` para abrir no simulador iOS.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## 📚 Conceitos Ensinados
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+1. **Componentes + JSX**: A base da UI declarativa.
+2. **useState**: Gerenciamento de estado local.
+3. **useEffect**: Ciclo de vida e efeitos colaterais.
+4. **StyleSheet**: Estilização e Layout (Flexbox).
+5. **APIs Nativas**: Acesso ao hardware (Vibração).
 
-## Get a fresh project
+## 📂 Estrutura de Pastas
 
-When you're ready, run:
-
-```bash
-npm run reset-project
 ```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+/app
+  index.tsx         # Tela Principal (Feed)
+  details/[id].tsx  # Tela de Detalhes Dinâmica
+  _layout.tsx       # Configuração da Navegação Stack
+/components
+  FeedItem.tsx      # Slide individual do Feed
+  InteractiveDemos.tsx # Demos rodando ao vivo
+  CodeBlock.tsx     # Exibição de código formatado
+/data
+  concepts.ts       # "Banco de dados" estático dos conteúdos
+/constants
+  theme.ts          # Paleta de cores (Dark Mode/TikTok theme)
+```
