@@ -3,32 +3,50 @@ import {
   View, 
   Text, 
   StyleSheet, 
-  Dimensions, 
   TouchableOpacity, 
-  Vibration 
+  Vibration,
+  useWindowDimensions 
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { Colors } from '@/constants/theme';
+import { api } from '@/services/api';
 import CodeBlock from './CodeBlock';
-import { Concept } from '@/data/concepts';
-
-const { height: WINDOW_HEIGHT } = Dimensions.get('window');
+interface Concept {
+  id: string;
+  title: string;
+  desc: string;
+  shortCode: string;
+  fullExplanation: string;
+  fullCode: string;
+}
 
 interface FeedItemProps {
   item: Concept;
 }
 
 export default function FeedItem({ item }: FeedItemProps) {
+  const { height } = useWindowDimensions();
+  const [likeCount, setLikeCount] = useState(0);
   const [liked, setLiked] = useState(false);
 
-  const handleLike = () => {
-    setLiked(!liked);
-    Vibration.vibrate(50);
+  const handleLike = async () => {
+    try {
+      await api.toggleLike(item.id);
+      if (liked) {
+        setLikeCount(prev => prev - 1);
+      } else {
+        setLikeCount(prev => prev + 1);
+      }
+      setLiked(!liked);
+      Vibration.vibrate(50);
+    } catch (error) {
+      console.log('Erro ao curtir:', error);
+    }
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { height }]}>
       <View style={styles.contentContainer}>
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.description}>{item.desc}</Text>
@@ -51,7 +69,7 @@ export default function FeedItem({ item }: FeedItemProps) {
               color={liked ? Colors.tiktok.accent : "white"} 
             />
           </View>
-          <Text style={styles.actionLabel}>{liked ? '1' : 'Curtir'}</Text>
+          <Text style={styles.actionLabel}>{likeCount > 0 ? likeCount : 'Curtir'}</Text>
         </TouchableOpacity>
 
         <Link href={`/details/${item.id}`} asChild>
@@ -69,11 +87,9 @@ export default function FeedItem({ item }: FeedItemProps) {
 
 const styles = StyleSheet.create({
   container: {
-    width: Dimensions.get('window').width,
-    height: WINDOW_HEIGHT, // Ensure it takes full window height including safe areas if needed, or adjust in parent
     backgroundColor: 'black',
     justifyContent: 'center',
-    paddingBottom: 80, // Space for bottom navigation if it existed, or just visual balance
+    paddingBottom: 80,
   },
   contentContainer: {
     paddingHorizontal: 20,

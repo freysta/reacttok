@@ -6,13 +6,14 @@ import { Colors } from '@/constants/theme';
 
 interface CodeBlockProps {
   code: string;
+  language?: string;
 }
 
-export default function CodeBlock({ code }: CodeBlockProps) {
+export default function CodeBlock({ code, language = 'javascript' }: CodeBlockProps) {
   return (
     <View style={styles.container}>
       <SyntaxHighlighter 
-        language='javascript' 
+        language={language} 
         style={tomorrow}
         highlighter={"prism"}
         fontSize={14}
