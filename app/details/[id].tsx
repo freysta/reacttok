@@ -1,14 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   View, 
   Text, 
   StyleSheet, 
   ScrollView, 
-  TouchableOpacity 
+  TouchableOpacity,
+  ActivityIndicator
 } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { CONCEPTS } from '@/data/concepts';
+import { api } from '@/services/api';
+
+interface Concept {
+  id: string;
+  title: string;
+  desc: string;
+  shortCode: string;
+  fullExplanation: string;
+  fullCode: string;
+}
+
+const adaptApiConcept = (apiConcept: any): Concept => ({
+  id: apiConcept.id,
+  title: apiConcept.title,
+  desc: apiConcept.description,
+  shortCode: apiConcept.short_code,
+  fullExplanation: apiConcept.full_explanation,
+  fullCode: apiConcept.full_code
+});
 import CodeBlock from '@/components/CodeBlock';
 import InteractiveDemo from '@/components/InteractiveDemos';
 import { Colors } from '@/constants/theme';
@@ -16,7 +35,33 @@ import { Colors } from '@/constants/theme';
 export default function DetailsScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
-  const concept = CONCEPTS.find(c => c.id === id);
+  const [concept, setConcept] = useState<Concept | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (id) loadConcept(id as string);
+  }, [id]);
+
+  const loadConcept = async (conceptId: string) => {
+    try {
+      setLoading(true);
+      const apiConcept = await api.getConcept(conceptId);
+      setConcept(adaptApiConcept(apiConcept));
+    } catch (error) {
+      console.log('Usando dados locais:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color="white" />
+        <Text style={{ color: 'white', marginTop: 10 }}>Carregando...</Text>
+      </View>
+    );
+  }
 
   if (!concept) {
     return (

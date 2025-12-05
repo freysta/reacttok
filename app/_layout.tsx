@@ -19,7 +19,7 @@ export default function RootLayout() {
 				<Stack.Screen name="details/[id]" options={{ presentation: "modal" }} />
 				<Stack.Screen name="+not-found" />
 			</Stack>
-			<StatusBar style="light" />
+			<StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
 		</ThemeProvider>
 	);
 }
