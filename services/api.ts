@@ -1,13 +1,13 @@
 import Constants from 'expo-constants';
 import { ApiConcept, Question } from '@/types';
 
-// Get the host URI (IP address of the Metro bundler)
+
 const debuggerHost = Constants.expoConfig?.hostUri;
 const localhost = debuggerHost?.split(':')[0] || 'localhost';
 
 const API_BASE_URL = `http://${localhost}:3000/api`;
 
-// Função para testar conexão
+
 const testConnection = async () => {
   const healthUrl = `http://${localhost}:3000/health`;
   try {
@@ -36,6 +36,9 @@ export const api = {
 
   async getConcept(id: string): Promise<ApiConcept> {
     const response = await fetch(`${API_BASE_URL}/concepts/${id}`);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
     const data = await response.json();
     return data.data;
   },

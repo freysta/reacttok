@@ -10,17 +10,22 @@
 > - Anderson Felipe Garcia Lopes
 > - Gabriel Lucena Ferreira
 > - Pedro Henrique
+>
+> **Turma:** ADS 2025/2 - 5º período
+> **Disciplina:** Dispositivos Móveis
 
 ---
 
 ## ✨ Funcionalidades
 
-- **Feed Infinito**: Role para baixo para descobrir novos conceitos (Hooks, Componentes, APIs).
-- **Micro-Learning**: Explicações concisas com exemplos de código reais e coloridos.
-- **Quiz Interativo**: Teste seus conhecimentos em diferentes categorias (Hooks, Core, Native).
-- **Gamificação**: Sistema de pontuação e feedback imediato no Quiz.
-- **Interação Social**: Curta (❤️) e Salve (📚) seus conceitos favoritos.
-- **Conceito do Dia**: Uma recomendação diária para manter o hábito de estudo.
+- **Feed Infinito**: Role para baixo para descobrir novos conceitos (33+ conceitos disponíveis)
+- **Micro-Learning**: Explicações concisas com exemplos de código reais e coloridos
+- **Quiz Interativo**: 49+ perguntas em diferentes categorias (Hooks, Core, Native)
+- **Gamificação**: Sistema de pontuação e feedback tátil imediato
+- **Criação de Conteúdo**: Usuários podem criar seus próprios conceitos
+- **Sistema de Bookmarks**: Salve seus conceitos favoritos
+- **Conceito do Dia**: Recomendação diária para manter o hábito de estudo
+- **Navegação TikTok-Style**: Interface familiar e intuitiva
 
 ---
 
@@ -118,10 +123,21 @@ reacttok/
 
 ---
 
-## 📝 Notas de Desenvolvimento
+## 🎯 Recursos React Native Destacados
 
-- **Conexão API**: O frontend detecta automaticamente o IP da sua máquina via `expo-constants` para conectar à API local. Não é necessário configurar IPs manualmente.
-- **Banco de Dados**: O arquivo `database.sqlite` é criado automaticamente dentro da pasta `api/`. Se precisar resetar tudo, basta apagar esse arquivo e rodar `npm run migrate` e `npm run seed` novamente.
+- **Vibração Tátil**: Feedback háptico usando `Vibration.vibrate()`
+- **AsyncStorage**: Persistência local de bookmarks e conteúdo do usuário
+- **FlatList Otimizada**: Scroll infinito com performance otimizada
+- **Expo Router**: Navegação baseada em arquivos
+- **Context API**: Gerenciamento de estado global
+- **TypeScript**: Tipagem estática para maior robustez
+
+## 📝 Notas Técnicas
+
+- **Conexão API**: Detecção automática de IP via `expo-constants`
+- **Banco de Dados**: SQLite com 33 conceitos e 49 perguntas pré-carregadas
+- **Arquitetura**: Frontend React Native + Backend Node.js/Express
+- **Responsividade**: Interface adaptada para diferentes tamanhos de tela
 
 ---
 

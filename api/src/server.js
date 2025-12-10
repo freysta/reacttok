@@ -7,6 +7,7 @@ require('dotenv').config();
 const conceptsRoutes = require('./routes/concepts');
 const usersRoutes = require('./routes/users');
 const likesRoutes = require('./routes/likes');
+const quizRoutes = require('./routes/quiz');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -30,6 +31,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/concepts', conceptsRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/likes', likesRoutes);
+app.use('/api/quizzes', quizRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

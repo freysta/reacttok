@@ -10,7 +10,7 @@ interface Concept {
 }
 
 export function useInfiniteScroll(originalConcepts: Concept[]) {
-  const [loadedItems, setLoadedItems] = useState(20); // Começa com 20 itens
+  const [loadedItems, setLoadedItems] = useState(20);
 
   const infiniteConcepts = useMemo(() => {
     if (originalConcepts.length === 0) return [];
@@ -21,7 +21,7 @@ export function useInfiniteScroll(originalConcepts: Concept[]) {
       const conceptIndex = i % originalConcepts.length;
       const concept = originalConcepts[conceptIndex];
       
-      // Cria ID único para cada repetição
+
       repeatedConcepts.push({
         ...concept,
         id: `${concept.id}-repeat-${i}`,
@@ -32,7 +32,7 @@ export function useInfiniteScroll(originalConcepts: Concept[]) {
   }, [originalConcepts, loadedItems]);
 
   const handleEndReached = () => {
-    // Carrega mais 10 itens quando chega no fim
+
     setLoadedItems(prev => prev + 10);
   };
 

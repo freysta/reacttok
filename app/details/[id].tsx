@@ -11,49 +11,80 @@ import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { api } from '@/services/api';
 import { useBookmarks } from '@/hooks/useBookmarks';
+import { useConcepts } from '@/context/ConceptsContext';
+import { useMyContent } from '@/hooks/useMyContent';
 import ReactionsBar from '@/components/ReactionsBar';
 import BottomTabBar from '@/components/BottomTabBar';
-
-interface Concept {
-  id: string;
-  title: string;
-  desc: string;
-  shortCode: string;
-  fullExplanation: string;
-  fullCode: string;
-}
-
-const adaptApiConcept = (apiConcept: any): Concept => ({
-  id: apiConcept.id,
-  title: apiConcept.title,
-  desc: apiConcept.description,
-  shortCode: apiConcept.short_code,
-  fullExplanation: apiConcept.full_explanation,
-  fullCode: apiConcept.full_code
-});
 import CodeBlock from '@/components/CodeBlock';
 import InteractiveDemo from '@/components/InteractiveDemos';
 import { Colors } from '@/constants/theme';
+import { Concept, ApiConcept } from '@/types';
+
+const adaptApiConcept = (apiConcept: ApiConcept): Concept => ({
+  id: apiConcept.id,
+  title: apiConcept.title,
+  description: apiConcept.description,
+  shortCode: apiConcept.short_code,
+  fullExplanation: apiConcept.full_explanation,
+  fullCode: apiConcept.full_code,
+  category: apiConcept.category,
+  difficulty_level: apiConcept.difficulty_level
+});
 
 export default function DetailsScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const [concept, setConcept] = useState<Concept | null>(null);
   const [loading, setLoading] = useState(false);
+  const { concepts } = useConcepts();
+  const { myContent } = useMyContent();
   const { isBookmarked, toggleBookmark } = useBookmarks();
   const bookmarked = concept ? isBookmarked(concept.id) : false;
 
   useEffect(() => {
     if (id) loadConcept(id as string);
-  }, [id]);
+  }, [id, concepts, myContent]);
 
   const loadConcept = async (conceptId: string) => {
     try {
       setLoading(true);
-      const apiConcept = await api.getConcept(conceptId);
-      setConcept(adaptApiConcept(apiConcept));
-    } catch (error) {
-      console.log('Usando dados locais:', error);
+      
+      // ta achando que foi feito por I.A é prof? to de olho em karam
+      const originalId = conceptId.includes('-repeat-') 
+        ? conceptId.split('-repeat-')[0] 
+        : conceptId;
+      
+
+      try {
+        const apiConcept = await api.getConcept(originalId);
+        setConcept(adaptApiConcept(apiConcept));
+        return;
+      } catch (apiError) {
+
+      }
+      
+
+      let localConcept = concepts.find(c => c.id === originalId);
+      if (localConcept) {
+        setConcept(localConcept);
+        return;
+      }
+      
+
+      let userConcept = myContent.find(c => c.id === originalId);
+      if (userConcept) {
+        setConcept({
+            id: userConcept.id,
+            title: userConcept.title,
+            description: userConcept.desc,
+            shortCode: userConcept.shortCode,
+            fullExplanation: userConcept.fullExplanation,
+            fullCode: userConcept.fullCode
+        });
+        return;
+      }
+      
+      setConcept(null);
     } finally {
       setLoading(false);
     }
@@ -72,6 +103,9 @@ export default function DetailsScreen() {
     return (
       <View style={styles.center}>
         <Text style={{ color: 'white' }}>Conceito não encontrado.</Text>
+        <TouchableOpacity onPress={() => router.back()} style={{marginTop: 20, padding: 10, backgroundColor: '#333', borderRadius: 8}}>
+            <Text style={{color: 'white'}}>Voltar</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -98,7 +132,7 @@ export default function DetailsScreen() {
         <Text style={styles.title}>{concept.title}</Text>
         
         <Text style={styles.sectionTitle}>Explicação</Text>
-        <Text style={styles.text}>{concept.fullExplanation}</Text>
+        <Text style={styles.text}>{concept.fullExplanation || concept.description}</Text>
 
         <View style={styles.divider} />
 
@@ -132,8 +166,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: 60,
-    paddingBottom: 20,
+    paddingTop: 20,
+    paddingBottom: 10,
     paddingHorizontal: 16,
     backgroundColor: 'black',
   },
@@ -147,7 +181,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
-    paddingBottom: 40,
+    paddingBottom: 0,
   },
   title: {
     color: Colors.tiktok.accent,

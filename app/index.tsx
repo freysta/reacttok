@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
   },
   header: {
     position: 'absolute',
-    top: 50,
+    top: 20,
     left: 0,
     right: 0,
     zIndex: 1000,

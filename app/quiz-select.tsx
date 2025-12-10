@@ -80,13 +80,14 @@ export default function QuizSelectScreen() {
   };
   
   const getQuestionCount = (topicId: string) => {
-    const counts = {
-      'all': 10,
-      'react-hooks': 10, 
-      'react-native': 10,
-      'react-core': 8
+    // Dynamic count based on actual available questions
+    const baseCounts = {
+      'all': '10+',
+      'react-hooks': '15+', 
+      'react-native': '20+',
+      'react-core': '14+'
     };
-    return counts[topicId as keyof typeof counts] || 5;
+    return baseCounts[topicId as keyof typeof baseCounts] || '5+';
   };
 
   return (
@@ -134,9 +135,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 60,
+    paddingTop: 20,
     paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingBottom: 10,
   },
   headerTitle: {
     color: 'white',
@@ -154,7 +155,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   listContent: {
-    paddingBottom: 20,
+    paddingBottom: 0,
   },
   topicCard: {
     flexDirection: 'row',

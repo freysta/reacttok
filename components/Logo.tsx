@@ -8,6 +8,7 @@ export default function Logo() {
       <Image 
         source={require('@/assets/images/react-logo.png')} 
         style={styles.image}
+        resizeMode="contain"
       />
       <Text style={styles.text}>
         React<Text style={styles.accent}>Tok</Text>
@@ -25,7 +26,6 @@ const styles = StyleSheet.create({
   image: {
     width: 24,
     height: 24,
-    resizeMode: 'contain',
   },
   text: {
     color: 'white',

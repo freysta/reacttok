@@ -1,13 +1,12 @@
+import BottomTabBar from "@/components/BottomTabBar";
+import Toast from "@/components/Toast";
 import { Colors } from "@/constants/theme";
 import { useConcepts } from "@/context/ConceptsContext";
 import { useBookmarks } from "@/hooks/useBookmarks";
 import { useMyContent } from "@/hooks/useMyContent";
 import { useToast } from "@/hooks/useToast";
-import BottomTabBar from "@/components/BottomTabBar";
-import Toast from "@/components/Toast";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useFocusEffect, useRouter } from "expo-router";
-import Constants from "expo-constants";
 import React, { useCallback, useState } from "react";
 import {
 	FlatList,
@@ -24,7 +23,9 @@ export default function ProfileScreen() {
 	const { myContent, refreshMyContent } = useMyContent();
 	const { toast, showToast, hideToast } = useToast();
 	const router = useRouter();
-	const [activeTab, setActiveTab] = useState<'bookmarks' | 'mycontent'>('bookmarks');
+	const [activeTab, setActiveTab] = useState<"bookmarks" | "mycontent">(
+		"bookmarks"
+	);
 
 	useFocusEffect(
 		useCallback(() => {
@@ -36,7 +37,7 @@ export default function ProfileScreen() {
 	const savedConcepts = concepts.filter((c) => bookmarks.includes(c.id));
 	const myContentSaved = myContent.filter((c) => bookmarks.includes(c.id));
 	const allSavedConcepts = [...savedConcepts, ...myContentSaved];
-	const displayData = activeTab === 'bookmarks' ? allSavedConcepts : myContent;
+	const displayData = activeTab === "bookmarks" ? allSavedConcepts : myContent;
 
 	const renderHeader = () => (
 		<View style={styles.headerContainer}>
@@ -53,50 +54,54 @@ export default function ProfileScreen() {
 					<Image
 						source={require("@/assets/images/react-logo.png")}
 						style={styles.avatar}
+						resizeMode="contain"
 					/>
 				</View>
 				<Text style={styles.username}>@dev.reacttok</Text>
 				<View style={styles.statsContainer}>
 					<View style={styles.statItem}>
-						<Text style={styles.statNumber}>142</Text>
-						<Text style={styles.statLabel}>Seguindo</Text>
+						<Text style={styles.statNumber}>{concepts.length}</Text>
+						<Text style={styles.statLabel}>Conceitos</Text>
 					</View>
 					<View style={styles.statItem}>
-						<Text style={styles.statNumber}>10k</Text>
-						<Text style={styles.statLabel}>Seguidores</Text>
+						<Text style={styles.statNumber}>{bookmarks.length}</Text>
+						<Text style={styles.statLabel}>Salvos</Text>
 					</View>
 					<View style={styles.statItem}>
-						<Text style={styles.statNumber}>530</Text>
-						<Text style={styles.statLabel}>Curtidas</Text>
+						<Text style={styles.statNumber}>{myContent.length}</Text>
+						<Text style={styles.statLabel}>Criados</Text>
 					</View>
 				</View>
-				<TouchableOpacity style={styles.editButton} onPress={() => router.push('/create')}>
+				<TouchableOpacity
+					style={styles.editButton}
+					onPress={() => router.push("/create")}
+				>
 					<Text style={styles.editButtonText}>Criar Conceito</Text>
 				</TouchableOpacity>
 			</View>
 
 			<View style={styles.tabs}>
-				<TouchableOpacity 
-					style={[styles.tab, activeTab === 'bookmarks' && styles.activeTab]}
-					onPress={() => setActiveTab('bookmarks')}
+				<TouchableOpacity
+					style={[styles.tab, activeTab === "bookmarks" && styles.activeTab]}
+					onPress={() => setActiveTab("bookmarks")}
 				>
-					<Ionicons 
-						name="bookmark" 
-						size={24} 
-						color={activeTab === 'bookmarks' ? 'white' : '#666'} 
+					<Ionicons
+						name="bookmark"
+						size={24}
+						color={activeTab === "bookmarks" ? "white" : "#666"}
 					/>
-					{activeTab === 'bookmarks' && <View style={styles.activeIndicator} />}
+					{activeTab === "bookmarks" && <View style={styles.activeIndicator} />}
 				</TouchableOpacity>
-				<TouchableOpacity 
-					style={[styles.tab, activeTab === 'mycontent' && styles.activeTab]}
-					onPress={() => setActiveTab('mycontent')}
+				<TouchableOpacity
+					style={[styles.tab, activeTab === "mycontent" && styles.activeTab]}
+					onPress={() => setActiveTab("mycontent")}
 				>
-					<Ionicons 
-						name="create" 
-						size={24} 
-						color={activeTab === 'mycontent' ? 'white' : '#666'} 
+					<Ionicons
+						name="create"
+						size={24}
+						color={activeTab === "mycontent" ? "white" : "#666"}
 					/>
-					{activeTab === 'mycontent' && <View style={styles.activeIndicator} />}
+					{activeTab === "mycontent" && <View style={styles.activeIndicator} />}
 				</TouchableOpacity>
 			</View>
 		</View>
@@ -115,11 +120,18 @@ export default function ProfileScreen() {
 						style={styles.item}
 						onPress={() => router.push(`/details/${item.id}`)}
 					>
-						<View style={[styles.itemIcon, activeTab === 'mycontent' && styles.myContentIcon]}>
+						<View
+							style={[
+								styles.itemIcon,
+								activeTab === "mycontent" && styles.myContentIcon,
+							]}
+						>
 							<Ionicons
-								name={activeTab === 'mycontent' ? 'create' : 'code-slash'}
+								name={activeTab === "mycontent" ? "create" : "code-slash"}
 								size={20}
-								color={activeTab === 'mycontent' ? '#ffd700' : Colors.tiktok.accent}
+								color={
+									activeTab === "mycontent" ? "#ffd700" : Colors.tiktok.accent
+								}
 							/>
 						</View>
 						<View style={styles.itemContent}>
@@ -127,9 +139,10 @@ export default function ProfileScreen() {
 							<Text style={styles.itemDesc} numberOfLines={1}>
 								{item.desc}
 							</Text>
-							{activeTab === 'mycontent' && (
+							{activeTab === "mycontent" && (
 								<Text style={styles.createdDate}>
-									Criado em {new Date(item.createdAt || '').toLocaleDateString()}
+									Criado em{" "}
+									{new Date(item.createdAt || "").toLocaleDateString()}
 								</Text>
 							)}
 						</View>
@@ -139,22 +152,22 @@ export default function ProfileScreen() {
 				ListEmptyComponent={
 					<View style={styles.emptyState}>
 						<Text style={styles.emptyText}>
-							{activeTab === 'bookmarks' 
-								? 'Você ainda não salvou nada.' 
-								: 'Você ainda não criou nenhum conceito.'}
+							{activeTab === "bookmarks"
+								? "Você ainda não salvou nada."
+								: "Você ainda não criou nenhum conceito."}
 						</Text>
 					</View>
 				}
 				contentContainerStyle={styles.listContent}
 			/>
-			
-			<Toast 
+
+			<Toast
 				message={toast.message}
 				type={toast.type}
 				visible={toast.visible}
 				onHide={hideToast}
 			/>
-			
+
 			<BottomTabBar />
 		</View>
 	);
@@ -173,8 +186,8 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		alignItems: "center",
 		paddingHorizontal: 16,
-		paddingTop: Constants.statusBarHeight + 20,
-		paddingBottom: 20,
+		paddingTop: 10,
+		paddingBottom: 10,
 	},
 	navTitle: {
 		color: "white",
@@ -200,7 +213,6 @@ const styles = StyleSheet.create({
 	avatar: {
 		width: 60,
 		height: 60,
-		resizeMode: "contain",
 	},
 	username: {
 		color: "white",
@@ -266,7 +278,7 @@ const styles = StyleSheet.create({
 		backgroundColor: "white",
 	},
 	listContent: {
-		paddingBottom: 40,
+		paddingBottom: 0,
 	},
 	item: {
 		flexDirection: "row",

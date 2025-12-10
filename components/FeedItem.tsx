@@ -30,7 +30,7 @@ export default function FeedItem({ item }: FeedItemProps) {
   const { toast, showToast, hideToast } = useToast();
   const bookmarked = isBookmarked(item.id);
   
-  // Animation value for the heart scale
+
   const scaleValue = useRef(new Animated.Value(1)).current;
 
   const animateLike = () => {
@@ -57,7 +57,7 @@ export default function FeedItem({ item }: FeedItemProps) {
       } else {
         setLikeCount(prev => prev + 1);
         showToast('Curtido! ❤️', 'success');
-        animateLike(); // Trigger animation only on like
+        animateLike();
       }
       setLiked(!liked);
       Vibration.vibrate(50);
@@ -152,9 +152,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 10,
-    textShadowColor: 'rgba(0, 0, 0, 0.75)',
-    textShadowOffset: { width: -1, height: 1 },
-    textShadowRadius: 10
+    textShadow: '-1px 1px 10px rgba(0, 0, 0, 0.75)'
   },
   description: {
     color: '#e0e0e0',

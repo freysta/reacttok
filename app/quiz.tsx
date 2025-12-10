@@ -139,7 +139,7 @@ export default function QuizScreen() {
 
       <View style={styles.questionContainer}>
         {currentQuestion.concept_id && (
-           <Text style={styles.conceptTag}>{currentQuestion.concept_id.toUpperCase()}</Text>
+           <Text style={styles.conceptTag}>📚 {currentQuestion.concept_id.toUpperCase()}</Text>
         )}
         <Text style={styles.questionText}>{currentQuestion.question}</Text>
         
