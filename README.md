@@ -1,152 +1,128 @@
-# ReactTok - Monorepo
+# 📱 ReactTok
 
-ReactTok é um miniapp educacional desenvolvido em React Native com Expo, inspirado no formato "TikTok" (feed vertical) para ensinar conceitos fundamentais de React Native de forma rápida e interativa.
+**ReactTok** é uma aplicação móvel educativa estilo "TikTok" desenvolvida para ensinar conceitos fundamentais de **React Native** de forma rápida, visual e interativa.
 
-## 🚀 Inicialização do Projeto
+> 🎓 **Projeto Acadêmico**
+>
+> Desenvolvido para a disciplina de **Dispositivos Móveis** do **IFRO - Campus Ji-Paraná**.
+>
+> **Desenvolvedores:**
+> - Anderson Felipe Garcia Lopes
+> - Gabriel Lucena Ferreira
+> - Pedro Henrique
+
+---
+
+## ✨ Funcionalidades
+
+- **Feed Infinito**: Role para baixo para descobrir novos conceitos (Hooks, Componentes, APIs).
+- **Micro-Learning**: Explicações concisas com exemplos de código reais e coloridos.
+- **Quiz Interativo**: Teste seus conhecimentos em diferentes categorias (Hooks, Core, Native).
+- **Gamificação**: Sistema de pontuação e feedback imediato no Quiz.
+- **Interação Social**: Curta (❤️) e Salve (📚) seus conceitos favoritos.
+- **Conceito do Dia**: Uma recomendação diária para manter o hábito de estudo.
+
+---
+
+## 🛠 Tecnologias Utilizadas
+
+### Frontend (Mobile)
+- **React Native** com **Expo**
+- **TypeScript** (Tipagem estática)
+- **Expo Router** (Navegação baseada em arquivos)
+- **Context API** (Gerenciamento de estado global)
+- **React Syntax Highlighter** (Visualização de código)
+
+### Backend (API)
+- **Node.js** & **Express**
+- **SQLite** (Banco de dados relacional leve)
+- **API RESTful**
+
+---
+
+## 🚀 Como Rodar o Projeto
+
+Este projeto é dividido em duas partes: **API** (Backend) e **App** (Frontend). Ambas precisam estar rodando simultaneamente.
 
 ### Pré-requisitos
-- Node.js (versão 18+)
-- npm ou yarn
-- Expo CLI (`npm install -g @expo/cli`)
+- [Node.js](https://nodejs.org/) instalado.
+- [Expo Go](https://expo.dev/client) instalado no seu celular (Android/iOS) ou um emulador configurado.
 
-### Instalação e Execução
+### 1. Configurando o Backend (API)
 
-1. **Clone o repositório:**
-   ```bash
-   git clone <url-do-repositorio>
-   cd Reackt-tok/front/reacttok
-   ```
+Abra um terminal na raiz do projeto e execute:
 
-2. **Instale as dependências:**
-   ```bash
-   npm install
-   ```
+```bash
+# Entre na pasta da API
+cd api
 
-3. **Configure o banco de dados:**
-   ```bash
-   cd api
-   npm install
-   npm run migrate
-   npm run seed
-   cd ..
-   ```
+# Instale as dependências
+npm install
 
-4. **Inicie o projeto (comando único):**
-   ```bash
-   npm start
-   ```
+# Crie o banco de dados e as tabelas
+npm run migrate
 
-   Este comando irá:
-   - Iniciar a API backend na porta 3000
-   - Iniciar o Expo Metro Bundler
-   - Rodar ambos simultaneamente
+# Popule o banco com dados iniciais (Conceitos e Perguntas)
+npm run seed
 
-5. **Acesse o app:**
-   - **Web**: Pressione `w` no terminal
-   - **Mobile**: Instale o app Expo Go e escaneie o QR code
-   - **Emulador**: Pressione `a` (Android) ou `i` (iOS)
+# Popule com dados extras e o quiz completo
+node src/database/seed-extra.js
+node src/database/seed-quiz-full.js
 
-## 📱 Telas e Funcionalidades
+# Inicie o servidor
+npm start
+```
 
-### 1. Feed Principal (`/`)
-- **Conceito**: Interface de rolagem vertical infinita (estilo TikTok).
-- **Funcionalidade**:
-    - Exibe "cards" que ocupam a tela inteira.
-    - Cada card ensina um conceito rápido (ex: `useState`, `useEffect`).
-    - Botão de "Curtir" com feedback tátil (Vibração).
-    - Botão "Detalhes" para aprofundamento.
-- **Tecnologia**: `FlatList` com `pagingEnabled`.
+> A API estará rodando em `http://localhost:3000`. Mantenha este terminal aberto.
 
-### 2. Detalhes (`/details/[id]`)
-- **Conceito**: Explicação aprofundada do tópico escolhido.
-- **Funcionalidade**:
-    - Explicação teórica completa.
-    - **Demonstração Interativa**: Um componente real rodando na tela (ex: um contador clicável para `useState`).
-    - **Código Completo**: Bloco de código com syntax highlighting.
-- **Navegação**: Transição via Stack Navigation.
+### 2. Configurando o Frontend (App)
 
-## 🛠️ Tecnologias Utilizadas
+Abra **outro** terminal na raiz do projeto e execute:
 
-- **Frontend**: React Native, Expo (SDK 52+), TypeScript
-- **Backend**: Node.js, Express, SQLite
-- **Navegação**: Expo Router (File-based routing)
-- **Interatividade**: 
-    - `react-native-reanimated` (Animações)
-    - `expo-haptics` / `Vibration` (Feedback tátil)
-- **Estilização**: `StyleSheet` (CSS-in-JS nativo)
+```bash
+# Instale as dependências do projeto
+npm install
 
-## 📚 Conceitos Ensinados
+# Inicie o Expo
+npx expo start
+```
 
-1. **Componentes + JSX**: A base da UI declarativa
-2. **useState**: Gerenciamento de estado local
-3. **useEffect**: Ciclo de vida e efeitos colaterais
-4. **StyleSheet**: Estilização e Layout (Flexbox)
-5. **FlatList**: Listas performáticas
-6. **Navegação**: React Navigation
-7. **TextInput**: Entrada de texto
-8. **TouchableOpacity**: Botões customizados
-9. **APIs Nativas**: Acesso ao hardware (Vibração)
+### 3. Testando no Celular
+
+1. Com o comando acima rodando, um **QR Code** aparecerá no terminal.
+2. Abra o app **Expo Go** no seu celular.
+3. Escaneie o QR Code.
+4. **Importante:** Certifique-se de que seu celular e seu computador estejam na **mesma rede Wi-Fi**.
+
+---
 
 ## 📂 Estrutura do Projeto
 
 ```
-/
-├── api/                 # Backend API
+reacttok/
+├── app/                 # Telas e Rotas (Expo Router)
+│   ├── index.tsx        # Feed Principal
+│   ├── quiz.tsx         # Tela de Quiz
+│   └── details/[id].tsx # Detalhes do Conceito
+├── components/          # Componentes Reutilizáveis (FeedItem, CodeBlock...)
+├── context/             # Estados Globais (Auth, Concepts)
+├── services/            # Comunicação com API
+├── api/                 # Backend Node.js
 │   ├── src/
-│   │   ├── controllers/ # Lógica de negócio
-│   │   ├── routes/      # Rotas da API
-│   │   └── database/    # Migrations e seeds
-│   └── package.json
-├── app/                 # Frontend React Native
-│   ├── index.tsx        # Tela Principal (Feed)
-│   └── details/[id].tsx # Tela de Detalhes
-├── components/          # Componentes reutilizáveis
-├── constants/           # Temas e constantes
-└── package.json         # Scripts principais
+│   │   ├── controllers/ # Lógica das rotas
+│   │   ├── database/    # Scripts de Migração e Seeds
+│   │   └── routes/      # Definição de endpoints
+│   └── database.sqlite  # Arquivo do banco de dados
+└── types/               # Definições de Tipos TypeScript
 ```
 
-## 🔧 Scripts Disponíveis
+---
 
-### Desenvolvimento
-- `npm start` - **Comando principal**: Roda API + Frontend simultaneamente
-- `npm run api:dev` - Apenas API (porta 3000)
-- `npm run expo:start` - Apenas Frontend (Expo Metro)
+## 📝 Notas de Desenvolvimento
 
-### Plataformas
-- `npm run web` - Versão web no navegador
-- `npm run android` - Android (emulador ou dispositivo)
-- `npm run ios` - iOS (apenas no macOS)
+- **Conexão API**: O frontend detecta automaticamente o IP da sua máquina via `expo-constants` para conectar à API local. Não é necessário configurar IPs manualmente.
+- **Banco de Dados**: O arquivo `database.sqlite` é criado automaticamente dentro da pasta `api/`. Se precisar resetar tudo, basta apagar esse arquivo e rodar `npm run migrate` e `npm run seed` novamente.
 
-### Utilitários
-- `npm run lint` - Verificação de código
-- `npm test` - Executa testes
+---
 
-### Banco de Dados (dentro da pasta api/)
-- `npm run migrate` - Cria tabelas do banco
-- `npm run seed` - Popula dados iniciais
-
-## 🌐 URLs e Acesso
-
-### API Backend
-- **Base URL**: http://localhost:3000
-- **Health Check**: http://localhost:3000/health
-- **Conceitos**: http://localhost:3000/api/concepts
-
-### Frontend
-- **Expo Metro**: Disponível após `npm start`
-- **Web**: http://localhost:8081 (pressione `w`)
-- **Mobile**: Use o app Expo Go + QR code
-
-## 🛠️ Solução de Problemas
-
-### API não conecta
-- Verifique se a porta 3000 está livre
-- Execute `cd api && npm run migrate && npm run seed`
-
-### Expo não inicia
-- Instale o Expo CLI: `npm install -g @expo/cli`
-- Limpe o cache: `npx expo start --clear`
-
-### Erro de dependências
-- Delete `node_modules` e `package-lock.json`
-- Execute `npm install` novamente
+Feito com 💜 e React Native.

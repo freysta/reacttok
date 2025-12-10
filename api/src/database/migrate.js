@@ -62,6 +62,20 @@ db.serialize(() => {
     )
   `);
 
+  // Questions table (for Quizzes)
+  db.run(`
+    CREATE TABLE IF NOT EXISTS questions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      concept_id VARCHAR(50) NOT NULL,
+      question TEXT NOT NULL,
+      options TEXT NOT NULL, -- JSON array of strings
+      correct_option_index INTEGER NOT NULL,
+      explanation TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (concept_id) REFERENCES concepts (id) ON DELETE CASCADE
+    )
+  `);
+
   console.log('✅ Database tables created successfully');
 });
 

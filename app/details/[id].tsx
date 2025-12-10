@@ -10,6 +10,9 @@ import {
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { api } from '@/services/api';
+import { useBookmarks } from '@/hooks/useBookmarks';
+import ReactionsBar from '@/components/ReactionsBar';
+import BottomTabBar from '@/components/BottomTabBar';
 
 interface Concept {
   id: string;
@@ -37,6 +40,8 @@ export default function DetailsScreen() {
   const router = useRouter();
   const [concept, setConcept] = useState<Concept | null>(null);
   const [loading, setLoading] = useState(false);
+  const { isBookmarked, toggleBookmark } = useBookmarks();
+  const bookmarked = concept ? isBookmarked(concept.id) : false;
 
   useEffect(() => {
     if (id) loadConcept(id as string);
@@ -80,7 +85,13 @@ export default function DetailsScreen() {
           <Ionicons name="chevron-back" size={28} color="white" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Detalhes</Text>
-        <View style={{ width: 28 }} />
+        <TouchableOpacity onPress={() => concept && toggleBookmark(concept.id)} style={styles.backButton}>
+          <Ionicons 
+            name={bookmarked ? "bookmark" : "bookmark-outline"} 
+            size={28} 
+            color={bookmarked ? "#ffd700" : "white"} 
+          />
+        </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
@@ -95,9 +106,13 @@ export default function DetailsScreen() {
 
         <View style={styles.divider} />
 
+        <ReactionsBar conceptId={concept.id} />
+
         <Text style={styles.sectionTitle}>Código Completo</Text>
         <CodeBlock code={concept.fullCode} />
       </ScrollView>
+      
+      <BottomTabBar />
     </View>
   );
 }

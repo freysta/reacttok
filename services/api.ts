@@ -1,11 +1,15 @@
-// Para Expo, use o IP da máquina ao invés de localhost
-const API_BASE_URL = __DEV__ 
-  ? 'http://10.48.217.137:3000/api'  // IP local da máquina
-  : 'http://localhost:3000/api';
+import Constants from 'expo-constants';
+import { ApiConcept, Question } from '@/types';
+
+// Get the host URI (IP address of the Metro bundler)
+const debuggerHost = Constants.expoConfig?.hostUri;
+const localhost = debuggerHost?.split(':')[0] || 'localhost';
+
+const API_BASE_URL = `http://${localhost}:3000/api`;
 
 // Função para testar conexão
 const testConnection = async () => {
-  const healthUrl = __DEV__ ? 'http://10.48.217.137:3000/health' : 'http://localhost:3000/health';
+  const healthUrl = `http://${localhost}:3000/health`;
   try {
     const response = await fetch(healthUrl);
     const data = await response.json();
@@ -16,17 +20,6 @@ const testConnection = async () => {
     return false;
   }
 };
-
-export interface ApiConcept {
-  id: string;
-  title: string;
-  description: string;
-  short_code: string;
-  full_explanation: string;
-  full_code: string;
-  category: string;
-  difficulty_level: number;
-}
 
 export const api = {
   async getConcepts(): Promise<ApiConcept[]> {
@@ -54,5 +47,15 @@ export const api = {
       body: JSON.stringify({ user_id: userId, concept_id: conceptId })
     });
     return response.json();
+  },
+
+  async getQuizQuestions(topic: string): Promise<Question[]> {
+    const endpoint = topic === 'all' 
+      ? '/quizzes/random' 
+      : `/quizzes/category/${topic}`;
+    
+    const response = await fetch(`${API_BASE_URL}${endpoint}`);
+    const data = await response.json();
+    return data.data || [];
   }
 };

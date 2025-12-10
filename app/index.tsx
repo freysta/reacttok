@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { 
   StyleSheet, 
   FlatList, 
@@ -6,74 +6,66 @@ import {
   StatusBar,
   Text,
   ActivityIndicator,
-  Dimensions
+  Dimensions,
+  TouchableOpacity,
+  Alert,
+  RefreshControl
 } from 'react-native';
-interface Concept {
-  id: string;
-  title: string;
-  desc: string;
-  shortCode: string;
-  fullExplanation: string;
-  fullCode: string;
-}
-
-const adaptApiConcept = (apiConcept: any): Concept => ({
-  id: apiConcept.id,
-  title: apiConcept.title,
-  desc: apiConcept.description,
-  shortCode: apiConcept.short_code,
-  fullExplanation: apiConcept.full_explanation,
-  fullCode: apiConcept.full_code
-});
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import FeedItem from '@/components/FeedItem';
+import Logo from '@/components/Logo';
+import BottomTabBar from '@/components/BottomTabBar';
+import Toast from '@/components/Toast';
+import LoadingIndicator from '@/components/LoadingIndicator';
+import { useConcepts } from '@/context/ConceptsContext';
+import { useRandomConcept } from '@/hooks/useRandomConcept';
+import { useToast } from '@/hooks/useToast';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 
 export default function FeedScreen() {
   const { height } = Dimensions.get('window');
-  const [concepts, setConcepts] = useState<Concept[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [dataSource, setDataSource] = useState<'api' | 'local'>('local');
+  const { concepts, loading, refreshConcepts } = useConcepts();
+  const { infiniteConcepts, handleEndReached } = useInfiniteScroll(concepts);
+  const { getRandomConcept, getTodaysConcept } = useRandomConcept();
+  const { toast, showToast, hideToast } = useToast();
+  const [refreshing, setRefreshing] = useState(false);
+  const router = useRouter();
 
-  useEffect(() => {
-    loadConcepts();
-  }, []);
-
-  const loadConcepts = async () => {
-    console.log('🔄 Iniciando carregamento...');
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
     try {
-      setLoading(true);
-      console.log('📡 Fazendo requisição para API...');
-      const apiUrl = typeof window !== 'undefined' 
-        ? 'http://localhost:3000/api/concepts'
-        : 'http://10.48.217.137:3000/api/concepts';
-      console.log('🌐 URL da API:', apiUrl);
-      const response = await fetch(apiUrl);
-      console.log('📊 Status da resposta:', response.status);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-      
-      const data = await response.json();
-      console.log('📦 Dados brutos recebidos:', data);
-      
-      const adaptedConcepts = data.data.map(adaptApiConcept);
-      console.log('🔄 Dados adaptados:', adaptedConcepts.length, 'conceitos');
-      console.log('📝 Lista de IDs:', adaptedConcepts.map((c: Concept) => c.id));
-      
-      setConcepts(adaptedConcepts);
-      setDataSource('api');
-      console.log('✅ Estado atualizado com dados da API');
-      console.log('📊 Estado final concepts.length:', adaptedConcepts.length);
+      await refreshConcepts();
     } catch (error) {
-      console.log('❌ Erro na API:', error);
-      setConcepts([]);
-      setDataSource('local');
+      showToast('Erro ao atualizar', 'error');
     } finally {
-      setLoading(false);
+      setRefreshing(false);
+    }
+  }, [refreshConcepts]);
+
+  const renderFooter = () => {
+    if (concepts.length === 0) return null;
+    return <LoadingIndicator />;
+  };
+
+  const handleRandomConcept = () => {
+    const randomConcept = getRandomConcept();
+    if (randomConcept) {
+      router.push(`/details/${randomConcept.id}`);
     }
   };
 
-  if (loading) {
+  const handleTodaysConcept = () => {
+    const todaysConcept = getTodaysConcept();
+    if (todaysConcept) {
+      showToast(`📅 Conceito do dia: ${todaysConcept.title}`, 'info');
+      setTimeout(() => router.push(`/details/${todaysConcept.id}`), 1000);
+    } else {
+      showToast('Nenhum conceito disponível hoje', 'error');
+    }
+  };
+
+  if (loading && !refreshing && infiniteConcepts.length === 0) {
     return (
       <View style={[styles.container, styles.centered]}>
         <ActivityIndicator size="large" color="white" />
@@ -86,15 +78,17 @@ export default function FeedScreen() {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
       
-      {/* Indicador de fonte dos dados */}
-      <View style={styles.dataSourceIndicator}>
-        <Text style={[styles.dataSourceText, { color: dataSource === 'api' ? '#00ff00' : '#ffaa00' }]}>
-          {dataSource === 'api' ? `✅ API: ${concepts.length} itens` : `⚠️ Local: ${concepts.length} itens`}
-        </Text>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={handleTodaysConcept}>
+          <Logo />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push('/profile')} style={styles.loginButton}>
+          <Ionicons name="person-outline" size={24} color="white" />
+        </TouchableOpacity>
       </View>
       
       <FlatList
-        data={concepts}
+        data={infiniteConcepts}
         renderItem={({ item }) => <FeedItem item={item} />}
         keyExtractor={item => item.id}
         pagingEnabled
@@ -109,11 +103,32 @@ export default function FeedScreen() {
           index,
         })}
         initialNumToRender={3}
-        maxToRenderPerBatch={3}
-        windowSize={5}
-        removeClippedSubviews={false}
+        maxToRenderPerBatch={5}
+        windowSize={10}
+        removeClippedSubviews={true}
+        onEndReached={handleEndReached}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={renderFooter}
         style={styles.list}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#fff" // iOS
+            colors={['#fff']} // Android
+            progressBackgroundColor="#000" // Android
+          />
+        }
       />
+      
+      <Toast 
+        message={toast.message}
+        type={toast.type}
+        visible={toast.visible}
+        onHide={hideToast}
+      />
+      
+      <BottomTabBar />
     </View>
   );
 }
@@ -135,18 +150,23 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
   },
-  dataSourceIndicator: {
+  header: {
     position: 'absolute',
     top: 50,
-    right: 10,
+    left: 0,
+    right: 0,
     zIndex: 1000,
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
   },
-  dataSourceText: {
-    fontSize: 12,
-    fontWeight: 'bold',
+  loginButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 20,
   }
 });

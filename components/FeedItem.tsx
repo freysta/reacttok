@@ -1,25 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   View, 
   Text, 
   StyleSheet, 
   TouchableOpacity, 
   Vibration,
-  useWindowDimensions 
+  useWindowDimensions,
+  Animated
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { Colors } from '@/constants/theme';
 import { api } from '@/services/api';
+import { useBookmarks } from '@/hooks/useBookmarks';
+import { useToast } from '@/hooks/useToast';
+import { Concept } from '@/types';
 import CodeBlock from './CodeBlock';
-interface Concept {
-  id: string;
-  title: string;
-  desc: string;
-  shortCode: string;
-  fullExplanation: string;
-  fullCode: string;
-}
+import Toast from './Toast';
 
 interface FeedItemProps {
   item: Concept;
@@ -29,19 +26,43 @@ export default function FeedItem({ item }: FeedItemProps) {
   const { height } = useWindowDimensions();
   const [likeCount, setLikeCount] = useState(0);
   const [liked, setLiked] = useState(false);
+  const { isBookmarked, toggleBookmark } = useBookmarks();
+  const { toast, showToast, hideToast } = useToast();
+  const bookmarked = isBookmarked(item.id);
+  
+  // Animation value for the heart scale
+  const scaleValue = useRef(new Animated.Value(1)).current;
+
+  const animateLike = () => {
+    Animated.sequence([
+      Animated.timing(scaleValue, {
+        toValue: 1.2,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleValue, {
+        toValue: 1,
+        friction: 4,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
 
   const handleLike = async () => {
     try {
       await api.toggleLike(item.id);
       if (liked) {
         setLikeCount(prev => prev - 1);
+        showToast('Curtida removida', 'info');
       } else {
         setLikeCount(prev => prev + 1);
+        showToast('Curtido! ❤️', 'success');
+        animateLike(); // Trigger animation only on like
       }
       setLiked(!liked);
       Vibration.vibrate(50);
     } catch (error) {
-      console.log('Erro ao curtir:', error);
+      showToast('Erro ao curtir', 'error');
     }
   };
 
@@ -49,7 +70,7 @@ export default function FeedItem({ item }: FeedItemProps) {
     <View style={[styles.container, { height }]}>
       <View style={styles.contentContainer}>
         <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.description}>{item.desc}</Text>
+        <Text style={styles.description}>{item.description}</Text>
         
         <View style={styles.codeContainer}>
           <CodeBlock code={item.shortCode} />
@@ -63,13 +84,35 @@ export default function FeedItem({ item }: FeedItemProps) {
           activeOpacity={0.8}
         >
           <View style={styles.iconContainer}>
-            <Ionicons 
-              name={liked ? "heart" : "heart-outline"} 
-              size={35} 
-              color={liked ? Colors.tiktok.accent : "white"} 
-            />
+            <Animated.View style={{ transform: [{ scale: scaleValue }] }}>
+              <Ionicons 
+                name={liked ? "heart" : "heart-outline"} 
+                size={35} 
+                color={liked ? Colors.tiktok.accent : "white"} 
+              />
+            </Animated.View>
           </View>
           <Text style={styles.actionLabel}>{likeCount > 0 ? likeCount : 'Curtir'}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={styles.actionButton}
+          onPress={() => {
+            toggleBookmark(item.id);
+            showToast(
+              bookmarked ? 'Removido dos salvos' : 'Salvo! 📚', 
+              bookmarked ? 'info' : 'success'
+            );
+          }}
+        >
+          <View style={styles.iconContainer}>
+            <Ionicons 
+              name={bookmarked ? "bookmark" : "bookmark-outline"} 
+              size={35} 
+              color={bookmarked ? "#ffd700" : "white"} 
+            />
+          </View>
+          <Text style={styles.actionLabel}>Salvar</Text>
         </TouchableOpacity>
 
         <Link href={`/details/${item.id}`} asChild>
@@ -81,6 +124,13 @@ export default function FeedItem({ item }: FeedItemProps) {
           </TouchableOpacity>
         </Link>
       </View>
+      
+      <Toast 
+        message={toast.message}
+        type={toast.type}
+        visible={toast.visible}
+        onHide={hideToast}
+      />
     </View>
   );
 }

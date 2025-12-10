@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import SyntaxHighlighter from 'react-native-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Colors } from '@/constants/theme';
@@ -12,15 +12,21 @@ interface CodeBlockProps {
 export default function CodeBlock({ code, language = 'javascript' }: CodeBlockProps) {
   return (
     <View style={styles.container}>
-      <SyntaxHighlighter 
-        language={language} 
-        style={tomorrow}
-        highlighter={"prism"}
-        fontSize={14}
-        customStyle={styles.highlighter}
+      <ScrollView 
+        horizontal 
+        showsHorizontalScrollIndicator={true}
+        contentContainerStyle={styles.scrollContent}
       >
-        {code}
-      </SyntaxHighlighter>
+        <SyntaxHighlighter 
+          language={language} 
+          style={tomorrow}
+          highlighter={"prism"}
+          fontSize={14}
+          customStyle={styles.highlighter}
+        >
+          {code}
+        </SyntaxHighlighter>
+      </ScrollView>
     </View>
   );
 }
@@ -33,9 +39,14 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.tiktok.darkGray,
     borderWidth: 1,
     borderColor: '#333',
+    maxWidth: '100%',
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
   highlighter: {
     padding: 16,
-    backgroundColor: 'transparent', // Let container handle bg
+    backgroundColor: 'transparent',
+    minWidth: '100%',
   }
 });
